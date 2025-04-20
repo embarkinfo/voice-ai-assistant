@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Vapi Assistant</title>
+    <style>
+      body {
+        background: #f9f9f9;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        font-family: monospace;
+      }
+      .vapi-btn {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="vapi-container"></div>
+
+    <script>
+      const buttonConfig = {
+        position: "bottom",
+        width: "300px",
+        height: "65px",
+        idle: {
+          color: "#F5F1E6",
+          backgroundColor: "linear-gradient(90deg, #9D754E 0%, #F3C08B 100%)",
+          border: "3px solid #000",
+          borderRadius: "50%",
+          type: "pill",
+          title: "TALK TO JOHN",
+          subtitle: "",
+          font: "monospace",
+          textColor: "#1A1A1A",
+          icon: "https://storage.googleapis.com/msgsndr/R8iH8jzf4SaWno3VQFbY/media/67f65de10a6217739fd3d398.png",
+        },
+        loading: {
+          color: "#F5F1E6",
+          backgroundColor: "linear-gradient(90deg, #00487C 0%, #5E95DC 100%)",
+          border: "3px solid #1A1A1A",
+          borderRadius: "50%",
+          type: "pill",
+          title: "Connecting...",
+          subtitle: "",
+          font: "monospace",
+          textColor: "#1A1A1A",
+          icon: "https://unpkg.com/lucide-static@0.321.0/icons/loader-2.svg",
+        },
+        active: {
+          color: "#F5F1E6",
+          backgroundColor: "linear-gradient(90deg, #00487C 0%, #5E95DC 100%)",
+          border: "3px solid #1A1A1A",
+          borderRadius: "50%",
+          type: "pill",
+          title: "Call in Progress",
+          subtitle: "",
+          font: "monospace",
+          textColor: "#D72638",
+          icon: "https://unpkg.com/lucide-static@0.321.0/icons/phone-off.svg",
+        },
+      };
+
+      (function (d, t) {
+        const g = document.createElement(t);
+        g.src = "https://cdn.jsdelivr.net/gh/VapiAI/html-script-tag@latest/dist/assets/index.js";
+        g.defer = true;
+        g.async = true;
+        d.head.appendChild(g);
+
+        g.onload = async function () {
+          try {
+            const response = await fetch("https://vapi-instance.onrender.com/start-vapi");
+            const data = await response.json();
+
+            const vapiInstance = await window.vapiSDK.run({
+              apiKey: data.apiKey,
+              assistant: data.assistant,
+              config: buttonConfig,
+            });
+
+            const btnCheck = setInterval(() => {
+              const btn = document.querySelector(".vapi-btn");
+              if (btn) {
+                document.getElementById("vapi-container").appendChild(btn);
+                clearInterval(btnCheck);
+              }
+            }, 200);
+          } catch (e) {
+            console.error("💥 Failed to load assistant:", e);
+          }
+        };
+      })(document, "script");
+    </script>
+  </body>
+</html>
